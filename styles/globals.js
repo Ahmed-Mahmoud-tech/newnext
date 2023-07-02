@@ -107,6 +107,16 @@ p {
     margin-top: -3px;
     margin-bottom: 3px;
  }
+
+.dragged > *{
+    background: var(--white-background) !important;
+    /* padding:10px; */
+    border-radius: 10px;
+    min-width: max-content;
+    border:10px solid var(--white-background) !important;
+  }
+
+
 `;
 
 export default GlobalStyle;

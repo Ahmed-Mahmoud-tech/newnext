@@ -29,13 +29,18 @@ const useRequest = () => {
   const addList = async (data) => {
     return await Request.post("list", data);
   };
+  const patchList = async (data) => {
+    return await Request.patch(`list/${data.id}`, data.data);
+  };
   const removeList = async (data) => {
     return await Request.delete(`list/${data}`);
   };
   const addVideo = async (data) => {
     return await Request.post("video", data);
   };
-
+  const updateOrder = async (data) => {
+    return await Request.patch(`video/order`, data);
+  };
   const getVideo = async (data) => {
     return await Request.get(`video/${data}`);
   };
@@ -72,6 +77,7 @@ const useRequest = () => {
 
   return {
     addVideo,
+    updateOrder,
     signIn,
     signUp,
     mainSearch,
@@ -82,6 +88,7 @@ const useRequest = () => {
     userList,
     addList,
     removeList,
+    patchList,
     getVideo,
     editVideo,
     getComments,

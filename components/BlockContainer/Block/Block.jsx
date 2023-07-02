@@ -51,7 +51,7 @@ const Block = ({
   };
 
   return (
-    <Wrapper>
+    <Wrapper className="block">
       {remove}
       <div className="imageContainer">
         {/* eslint-disable-next-line @next/next/no-img-element */}

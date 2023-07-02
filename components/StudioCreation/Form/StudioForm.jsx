@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-import useRequest from "../../../axios/apis/useRequest";
+import ListForm from "@/components/Shared/ListForm/ListForm";
 
 export const getId = (e, type = "event") => {
   let link;
@@ -43,12 +43,6 @@ const StudioForm = ({
   const [startMinute, setStartMinute] = useState(0);
   const [startSecond, setStartSecond] = useState(0);
   const [validationObj, setValidationObj] = useState(0);
-  const [actionType, setActionType] = useState("Add");
-  const [desc, setDesc] = useState("");
-  const [listInput, setListInput] = useState("");
-  const [list, setList] = useState([]);
-
-  const { userList, addList, removeList } = useRequest();
 
   useEffect(() => {
     setEndSecond(0);
@@ -67,13 +61,6 @@ const StudioForm = ({
     formik.values.endSecond = "";
     formik.values.endMinute = "";
   }, [dubbingOption]);
-
-  useEffect(() => {
-    (async () => {
-      const list = await userList();
-      setList(list.data);
-    })();
-  }, []);
 
   const warningMassage = (message) => {
     toast.warn(message, {
@@ -227,20 +214,6 @@ const StudioForm = ({
     },
   });
 
-  const listAction = async () => {
-    if (actionType == "Add") {
-      await addList({
-        title: listInput,
-        description: desc,
-      });
-    } else if (actionType == "Remove") {
-      await removeList(list[listInput]);
-    }
-    const listData = await userList();
-    setList(listData.data);
-    setListInput("");
-    setActionType("Add");
-  };
   return (
     <Wrapper>
       <div className="upForm">
@@ -390,44 +363,7 @@ const StudioForm = ({
           </button>
         </form>
       </div>
-      <div className="listForm">
-        <div className="listInputWrapper">
-          <input
-            list="lists"
-            placeholder="Add/Remove list"
-            name="list"
-            autoComplete="off"
-            value={listInput}
-            onChange={(e) => {
-              Object.keys(list).includes(e.target.value)
-                ? setActionType("Remove")
-                : setActionType("Add");
-              setListInput(e.target.value);
-            }}
-          />
-          {actionType == "Add" && (
-            <input
-              placeholder="Description"
-              name="description"
-              autoComplete="off"
-              value={desc}
-              onChange={(e) => {
-                setDesc(e.target.value);
-              }}
-            />
-          )}
-        </div>
-
-        <datalist id="lists">
-          {Object.keys(list).map((item, key) => (
-            <option key={key}>{item}</option>
-          ))}
-        </datalist>
-
-        <button typ="button" onClick={listAction}>
-          {actionType}
-        </button>
-      </div>
+      <ListForm />
     </Wrapper>
   );
 };

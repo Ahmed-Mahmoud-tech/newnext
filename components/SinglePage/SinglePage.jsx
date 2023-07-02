@@ -10,6 +10,7 @@ import Share from "./Share/Share";
 import Report from "./Report/Report";
 import { getId } from "../StudioCreation/Form/StudioForm";
 import useRequest from "../../axios/apis/useRequest";
+import { BiEdit } from "react-icons/bi";
 
 import {
   FaThumbsDown,
@@ -27,16 +28,20 @@ import { useDispatch } from "react-redux";
 import { changePop, changeComponent } from "../../store/slices/style";
 import Notification from "../Globals/Notification/Notification";
 import { useSelector } from "react-redux";
+import ListForm from "../Shared/ListForm/ListForm";
 
 const SinglePage = ({ videoData }) => {
   console.log({ videoData });
   const dispatch = useDispatch();
   const userInfo = useSelector((state) => state.user.info);
   const [notification, setNotification] = useState();
+  const [edit, setEdit] = useState(false);
   const [start, setStart] = useState(0);
   const [end, setEnd] = useState();
   const [commentText, setCommentText] = useState("");
   const [videoInfo, setVideoInfo] = useState({});
+  const [title, setTitle] = useState();
+  const [description, setDescription] = useState();
   const [videoTitle, setVideoTitle] = useState("");
   const [numberOfLastAction, setNumberOfLastAction] = useState();
   const [player, setPlayer] = useState();
@@ -179,6 +184,8 @@ const SinglePage = ({ videoData }) => {
       if (videoDataVar.isLike) setLike(1);
       if (videoDataVar.isDislike) setLike(-1);
       showNotification(videoDataVar.notify);
+      setTitle(videoDataVar?.lists[0]?.title);
+      setDescription(videoDataVar?.lists[0]?.description);
     };
 
     (() => {
@@ -196,212 +203,257 @@ const SinglePage = ({ videoData }) => {
     <>
       {Object.keys(videoInfo).length && (
         <Wrapper>
-          <div className="right">
-            <div className="mainVideo">
-              <MainVideo
-                videoWidth={videoWidth}
-                dubbingOption={7}
-                option={{
-                  width: "100%",
-                  height: "100%",
-                  playerVars: { controls: 1, end, start },
-                }}
-                videoId={getId(videoInfo.videoLink, "link")}
-                player={player}
-                setPlayer={setPlayer}
-                audioRef={audioRef}
-                startSec={start}
-                setVideoTitle={setVideoTitle}
-                sectionType={"audio"}
-                numberOfLastAction={numberOfLastAction}
-                setNumberOfLastAction={setNumberOfLastAction}
-                startAction={startAction}
-                setStartAction={setStartAction}
-                recPause={recPause}
-                pauseSec={pauseSec}
-              />
-              <audio
-                src={videoInfo.path}
-                controls
-                ref={audioRef}
-                style={{ display: "none" }}
-              />
-            </div>
-            <div className="subVideo">
-              <div className="videoTitle">
-                <span className="views">
-                  <FaEye />
-                  {videoInfo.views + 1}
-                </span>
-                {videoInfo.title}
+          {/* <div className="listInfo">
+            {videoInfo.lists[0].title && (
+              <div className="listTitle">{videoInfo.lists[0].title}</div>
+            )}
+            {videoInfo.lists[0].description && (
+              <div className="listDescription">
+                {videoInfo.lists[0].description}
               </div>
+            )}
+          </div> */}
 
-              <div className="info">
-                <div className="name">{videoInfo?.author?.username}</div>
-
-                <div className="pic">
-                  <Image
-                    src={videoInfo.author?.avatar}
-                    alt={"author"}
-                    width={50}
-                    height={50}
-                  />
-                  <button
-                    type="button"
-                    className="subscribe"
-                    style={{
-                      background:
-                        isSubscribe === true && "var(--primary-background)",
-                    }}
-                    onClick={() => {
-                      userInfo.username
-                        ? clickSubscribe()
-                        : dispatch(changePop("auth"));
-                    }}>
-                    <span>Subscribe :</span>
-                    <span className="number">{subscribeCount}</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="comment"
-                    onClick={() =>
-                      userInfo.username
-                        ? setCommentStatus(!commentStatus)
-                        : dispatch(changePop("auth"))
-                    }>
-                    <span className="number">Comment</span>
-                    <span className="icon">
-                      <FaRegCommentDots />
-                    </span>
-                  </button>
-                </div>
-                <div className="date">
-                  <span className="views">Creation / Modification Date: </span>
-                  {videoInfo.updatedAt?.toString().substring(0, 10)}
-                </div>
-                {commentStatus && (
-                  <div className="commentForm">
-                    <form action="" onSubmit={sumitForm}>
-                      <textarea
-                        type="text"
-                        value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
-                        placeholder="Add your Comment..."
-                      />
-                      <button type="submit" className="commentSubmit">
-                        Submit
-                      </button>
-                    </form>
+          <div className="listInfo">
+            {edit ? (
+              <ListForm
+                type="Edit"
+                title={title}
+                description={description}
+                setEdit={setEdit}
+                setTitle={setTitle}
+                id={videoInfo.lists[0]._id}
+                setDescription={setDescription}
+              />
+            ) : (
+              videoInfo?.lists[0]?.title && (
+                <>
+                  <div className="">
+                    <h3>{title}</h3>
+                    <p>{description}</p>
                   </div>
-                )}
-              </div>
-              <div className="action">
-                <div className="action-item">
-                  <div className="clickAction">
-                    <span
-                      className=""
-                      onClick={() =>
-                        userInfo.username
-                          ? likeFun()
-                          : dispatch(changePop("auth"))
-                      }
-                      style={{
-                        color: like === 1 && "var(--primary-background)",
-                      }}>
-                      <FaThumbsUp />
-                      <span className="number">{likeCount}</span>
-                    </span>
-                    <span
-                      className=""
-                      onClick={() =>
-                        userInfo.username
-                          ? disLikeFun()
-                          : dispatch(changePop("auth"))
-                      }
-                      style={{
-                        color: like === -1 && "var(--primary-background)",
-                      }}>
-                      <FaThumbsDown />
-                      <span className="number">{dislikeCount}</span>
-                    </span>
-                    <span className="" onClick={openShare}>
-                      <FaShareAlt />
-                      <span className="number">Share</span>
-                    </span>
-                    <span
-                      className=""
-                      onClick={() =>
-                        userInfo.username
-                          ? setLaterFun()
-                          : dispatch(changePop("auth"))
-                      }
-                      style={{ color: later && "var(--primary-background)" }}>
-                      <FaBusinessTime />
-                      <span className="number">Watch later</span>
-                    </span>
+                  {videoInfo?.remove == true && (
+                    <button
+                      className="modification"
+                      onClick={() => setEdit(true)}>
+                      <BiEdit />
+                    </button>
+                  )}
+                </>
+              )
+            )}
+          </div>
 
-                    <span
-                      className=""
+          <div className="singleVideo">
+            <div className="right">
+              <div className="mainVideo">
+                <MainVideo
+                  videoWidth={videoWidth}
+                  dubbingOption={7}
+                  option={{
+                    width: "100%",
+                    height: "100%",
+                    playerVars: { controls: 1, end, start },
+                  }}
+                  videoId={getId(videoInfo.videoLink, "link")}
+                  player={player}
+                  setPlayer={setPlayer}
+                  audioRef={audioRef}
+                  startSec={start}
+                  setVideoTitle={setVideoTitle}
+                  sectionType={"audio"}
+                  numberOfLastAction={numberOfLastAction}
+                  setNumberOfLastAction={setNumberOfLastAction}
+                  startAction={startAction}
+                  setStartAction={setStartAction}
+                  recPause={recPause}
+                  pauseSec={pauseSec}
+                />
+                <audio
+                  src={videoInfo.path}
+                  controls
+                  ref={audioRef}
+                  style={{ display: "none" }}
+                />
+              </div>
+              <div className="subVideo">
+                <div className="videoTitle">
+                  <span className="views">
+                    <FaEye />
+                    {videoInfo.views + 1}
+                  </span>
+                  {videoInfo.title}
+                </div>
+
+                <div className="info">
+                  <div className="name">{videoInfo?.author?.username}</div>
+
+                  <div className="pic">
+                    <Image
+                      src={videoInfo.author?.avatar}
+                      alt={"author"}
+                      width={50}
+                      height={50}
+                    />
+                    <button
+                      type="button"
+                      className="subscribe"
+                      style={{
+                        background:
+                          isSubscribe === true && "var(--primary-background)",
+                      }}
+                      onClick={() => {
+                        userInfo.username
+                          ? clickSubscribe()
+                          : dispatch(changePop("auth"));
+                      }}>
+                      <span>Subscribe :</span>
+                      <span className="number">{subscribeCount}</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="comment"
                       onClick={() =>
                         userInfo.username
-                          ? openReport()
+                          ? setCommentStatus(!commentStatus)
                           : dispatch(changePop("auth"))
                       }>
-                      <FaFlag />
-                      <span className="number">Report</span>
+                      <span className="number">Comment</span>
+                      <span className="icon">
+                        <FaRegCommentDots />
+                      </span>
+                    </button>
+                  </div>
+                  <div className="date">
+                    <span className="views">
+                      Creation / Modification Date:{" "}
                     </span>
+                    {videoInfo.updatedAt?.toString().substring(0, 10)}
+                  </div>
+                  {commentStatus && (
+                    <div className="commentForm">
+                      <form action="" onSubmit={sumitForm}>
+                        <textarea
+                          type="text"
+                          value={commentText}
+                          onChange={(e) => setCommentText(e.target.value)}
+                          placeholder="Add your Comment..."
+                        />
+                        <button type="submit" className="commentSubmit">
+                          Submit
+                        </button>
+                      </form>
+                    </div>
+                  )}
+                </div>
+                <div className="action">
+                  <div className="action-item">
+                    <div className="clickAction">
+                      <span
+                        className=""
+                        onClick={() =>
+                          userInfo.username
+                            ? likeFun()
+                            : dispatch(changePop("auth"))
+                        }
+                        style={{
+                          color: like === 1 && "var(--primary-background)",
+                        }}>
+                        <FaThumbsUp />
+                        <span className="number">{likeCount}</span>
+                      </span>
+                      <span
+                        className=""
+                        onClick={() =>
+                          userInfo.username
+                            ? disLikeFun()
+                            : dispatch(changePop("auth"))
+                        }
+                        style={{
+                          color: like === -1 && "var(--primary-background)",
+                        }}>
+                        <FaThumbsDown />
+                        <span className="number">{dislikeCount}</span>
+                      </span>
+                      <span className="" onClick={openShare}>
+                        <FaShareAlt />
+                        <span className="number">Share</span>
+                      </span>
+                      <span
+                        className=""
+                        onClick={() =>
+                          userInfo.username
+                            ? setLaterFun()
+                            : dispatch(changePop("auth"))
+                        }
+                        style={{ color: later && "var(--primary-background)" }}>
+                        <FaBusinessTime />
+                        <span className="number">Watch later</span>
+                      </span>
 
-                    <span
-                      className=""
-                      onClick={() => {
-                        dispatch(changeComponent(Video));
-                        dispatch(changePop("component"));
-                        updateUser({
-                          url: userInfo._id,
-                          data: { support: true },
-                        });
-                      }}>
-                      <FaHandsHelping />
-                      <span className="number">Support Me</span>
-                    </span>
-                    <a
-                      href={videoInfo.author?.coffeeLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={() =>
-                        updateUser({
-                          url: userInfo._id,
-                          data: { coffee: true },
-                        })
-                      }
-                      className="disLike">
-                      <FaCoffee />
-                      <span className="number">Buy me a Coffee</span>
-                    </a>
+                      <span
+                        className=""
+                        onClick={() =>
+                          userInfo.username
+                            ? openReport()
+                            : dispatch(changePop("auth"))
+                        }>
+                        <FaFlag />
+                        <span className="number">Report</span>
+                      </span>
+
+                      <span
+                        className=""
+                        onClick={() => {
+                          dispatch(changeComponent(Video));
+                          dispatch(changePop("component"));
+                          updateUser({
+                            url: userInfo._id,
+                            data: { support: true },
+                          });
+                        }}>
+                        <FaHandsHelping />
+                        <span className="number">Support Me</span>
+                      </span>
+                      <a
+                        href={videoInfo.author?.coffeeLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        onClick={() =>
+                          updateUser({
+                            url: userInfo._id,
+                            data: { coffee: true },
+                          })
+                        }
+                        className="disLike">
+                        <FaCoffee />
+                        <span className="number">Buy me a Coffee</span>
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
+              <div className="description">{videoInfo.description}</div>
+              {videoComment.map((comment, index) => {
+                return (
+                  <Comments
+                    VideoComments={{ ...comment, parent: true }}
+                    key={index}
+                  />
+                );
+              })}
             </div>
-            <div className="description">{videoInfo.description}</div>
-            {videoComment.map((comment, index) => {
-              return (
-                <Comments
-                  VideoComments={{ ...comment, parent: true }}
-                  key={index}
+            {videoInfo?.lists[0]?.listVideo && (
+              <div className="left">
+                <Related
+                  videos={videoInfo?.lists[0]?.listVideo}
+                  avatar={videoInfo.author?.avatar}
+                  username={videoInfo.author?.username}
+                  remove={videoInfo.remove}
                 />
-              );
-            })}
+              </div>
+            )}
           </div>
-          {videoInfo?.lists[0]?.listVideo && (
-            <div className="left">
-              <Related
-                videos={videoInfo?.lists[0]?.listVideo}
-                avatar={videoInfo.author?.avatar}
-                username={videoInfo.author?.username}
-                remove={videoInfo.remove}
-              />
-            </div>
-          )}
         </Wrapper>
       )}
     </>

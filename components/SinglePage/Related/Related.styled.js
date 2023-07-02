@@ -5,7 +5,13 @@ const Wrapper = styled.div`
   width: 100%;
   justify-content: flex-start;
 
-  & > div {
+  p.dragNote {
+    font-weight: bold;
+    padding: 15px;
+    color: var(--primary-background);
+  }
+
+  .block {
     width: unset;
     display: flex;
     margin-top: 0;

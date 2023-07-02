@@ -9,7 +9,7 @@ const cacheRequest = () => {
     withCredentials: true,
     headers: {
       "Access-Control-Expose-Headers": "token1",
-      Authorization: localStorageToken.value,
+      Authorization: localStorageToken?.value,
       Cookie: cookies(),
     },
   };
