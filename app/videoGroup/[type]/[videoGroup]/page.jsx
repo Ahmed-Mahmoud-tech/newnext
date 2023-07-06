@@ -2,6 +2,7 @@ import Block from "@/components/BlockContainer/Block/Block";
 import BlockContainer from "@/components/BlockContainer/BlockContainer";
 import cacheRequest from "../../../../axios/apis/cacheRequest";
 import NoResult from "../component/NoResult";
+import ClientRedirect from "@/components/Shared/ClientRedirect/ClientRedirect";
 
 const searchRequest = (videoGroup) => {
   return cacheRequest().get(`video_group/${videoGroup}`, { cash: "no-store" });
@@ -29,10 +30,14 @@ const requestType = {
 //    videoImage, title, username, updatedAt, videoLink, like, views, _id, videoLength, remove, avatar
 
 export default async function videoGroup({ params }) {
-  console.log(params.type, params.videoGroup);
   let videoGroupResult = [];
+  console.log(params.type, params.videoGroup);
   if (Object.keys(requestType).includes(params.type)) {
-    videoGroupResult = await requestType[params?.type](params?.videoGroup);
+    try {
+      videoGroupResult = await requestType[params?.type](params?.videoGroup);
+    } catch (err) {
+      if (err?.response?.status == 401) return <ClientRedirect path={"/"} />;
+    }
   }
   return (
     <main>

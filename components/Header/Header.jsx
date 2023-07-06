@@ -6,6 +6,7 @@ import { useState, useEffect, useRef } from "react";
 import PopMenu from "./PopMenu/PopMenu";
 import { useSelector, useDispatch } from "react-redux";
 import { changeMode, changePop } from "../../store/slices/style";
+import { usePathname } from "next/navigation";
 
 import {
   BiHome,
@@ -31,6 +32,8 @@ import { addUserData, clearUserData } from "../../store/slices/user";
 import useRequest from "../../axios/apis/useRequest";
 import { searchVideos } from "../../store/slices/videoResult";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { authRoutes } from "@/const";
 
 export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
@@ -53,17 +56,17 @@ export default function Header() {
   const { userData, logOut } = useRequest();
 
   const router = useRouter();
+  const pathname = usePathname();
+
+  const logout = () => {
+    dispatch(clearUserData());
+    localStorage.setItem("token", "");
+    setCookie("token", "", 7);
+    logOut();
+  };
 
   const menuFun = () => {
-    return [
-      () => dispatch(changeMode(!currentMode)),
-      () => {
-        dispatch(clearUserData());
-        localStorage.setItem("token", "");
-        setCookie("token", "", 7);
-        logOut();
-      },
-    ];
+    return [() => dispatch(changeMode(!currentMode)), logout];
   };
 
   const closeProfile = () => {
@@ -81,6 +84,8 @@ export default function Header() {
         if (res) {
           dispatch(addUserData(res.data));
         }
+      } else if (authRoutes.includes(pathname)) {
+        router.push(`/`);
       }
     })();
   }, []);
@@ -259,14 +264,16 @@ export default function Header() {
           </div>
           {avatar ? (
             <>
-              <div className="create">
-                <BiVideoPlus />
-              </div>
+              <Link href="/studio">
+                <div className="create">
+                  <BiVideoPlus />
+                </div>
+              </Link>
 
-              <div className="notification">
+              {/* <div className="notification">
                 <span className="count">+9</span>
                 <BiBell />
-              </div>
+              </div> */}
             </>
           ) : (
             <button

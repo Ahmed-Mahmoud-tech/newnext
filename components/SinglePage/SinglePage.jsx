@@ -201,6 +201,7 @@ const SinglePage = ({ videoData }) => {
 
   return (
     <>
+      {console.log(videoInfo, "********************")}
       {Object.keys(videoInfo).length && (
         <Wrapper>
           {/* <div className="listInfo">
@@ -212,7 +213,7 @@ const SinglePage = ({ videoData }) => {
                 {videoInfo.lists[0].description}
               </div>
             )}
-          </div> */}
+            </div> */}
 
           <div className="listInfo">
             {edit ? (

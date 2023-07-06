@@ -55,6 +55,7 @@ const useApi = () => {
       return res;
     },
     async (err) => {
+      console.log("8888888888888");
       dispatch(changePreloader(false));
       if (err.response) {
         //when the Access Token is expired

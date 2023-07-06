@@ -19,7 +19,7 @@ export default function StyledComponentsRegistry({ children }) {
 
   return (
     <StyleSheetManager sheet={styledComponentsStyleSheet.instance}>
-      {children}
+      <>{children}</>
     </StyleSheetManager>
   );
 }

@@ -30,6 +30,7 @@ const Profile = () => {
       fullName: userInfo.fullName ? userInfo.fullName : "",
       phone: userInfo.phone ? userInfo.phone : "",
       email: userInfo.email ? userInfo.email : "",
+      coffeeLink: userInfo.coffeeLink ? userInfo.coffeeLink : "",
       age: userInfo.age ? userInfo.age : "",
       gender: userInfo.gender ? userInfo.gender : "",
       password: userInfo.password ? userInfo.password : "",
@@ -41,6 +42,7 @@ const Profile = () => {
         .required("Required!")
         .matches(phoneRegExp, "Phone number is not valid"),
       email: Yup.string().required("Required!").email("This mail is not valid"),
+      coffeeLink: Yup.string(),
       age: Yup.number("Must be a number")
         .required("Required!")
         .test(
@@ -86,6 +88,7 @@ const Profile = () => {
       fullName: userInfo.fullName ? userInfo.fullName : "",
       phone: userInfo.phone ? userInfo.phone : "",
       email: userInfo.email ? userInfo.email : "",
+      coffeeLink: userInfo.coffeeLink ? userInfo.coffeeLink : "",
       age: userInfo.age ? userInfo.age : "",
       gender: userInfo.gender ? userInfo.gender : "",
       password: userInfo.password ? userInfo.password : "",
@@ -167,6 +170,19 @@ const Profile = () => {
                 <div className="inputWrapper">
                   <input
                     type="text"
+                    name="coffeeLink"
+                    placeholder="Coffee Link"
+                    id="coffeeLink"
+                    value={formik.values.coffeeLink}
+                    onChange={formik.handleChange}
+                  />
+                  {formik.errors.coffeeLink && formik.touched.coffeeLink && (
+                    <p>{formik.errors.coffeeLink}</p>
+                  )}
+                </div>
+                <div className="inputWrapper">
+                  <input
+                    type="text"
                     name="age"
                     placeholder="Age"
                     id="age"
@@ -205,10 +221,12 @@ const Profile = () => {
                     <p>{formik.errors.password}</p>
                   )}
                 </div>
+
+                <button type="submit">Submit</button>
               </div>
             </div>
 
-            <h4>Notification Permission:</h4>
+            {/* <h4>Notification Permission:</h4>
             <div className="notification">
               <label className="container">
                 Channels you subscribe
@@ -250,10 +268,10 @@ const Profile = () => {
                 />
                 <span className="checkmark"></span>
               </label>
-            </div>
+            </div> */}
           </div>
         </div>
-        <button type="submit">Submit</button>
+        {/* <button type="submit">Submit</button> */}
       </form>
     </Wrapper>
   );
